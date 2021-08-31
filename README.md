@@ -1,5 +1,5 @@
 # Web3 Encryption Suite (W3ES) 
-[logo](https://store.b-commerce.co/w3es_blawky.png)
+[logo](https://raw.githubusercontent.com/Guer-co/Web3-Encryption-Suite/master/public/w3es_blawky.png)
 
 Simple Encryption Suite built for Web3 using ECDSA keypairs for Identity, Key Generation, and Key distribution. 
 
