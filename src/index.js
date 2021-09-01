@@ -228,22 +228,10 @@ const decrypt = async (f,c,t,n) => {
     })
     .then(res => res.json())
     .then(res => {
-        if (t === "image/png") {
-            filedata = "data:image/png;base64," + res;
-        } else if  (t === "image/jpeg") {
-            filedata = "data:image/jpeg;base64," + res;
-        } else if (t === "text/plain") {
-            filedata = "data:text/plain;base64," + res;
-        } else if (t === "image/gif") {
-            filedata = "data:image/gif;base64," + res;
-        } else if (t === "image/webp") {
-            filedata = "data:image/webp;base64," + res;
-        } else if (t === "application/pdf") {
-            filedata = "data:application/pdf;base64," + res;
-        }
-        var FileSaver = require('file-saver');
-        var blob = new Blob([atob(res)], {type: t});
-        FileSaver.saveAs(blob, n);
+            let download = document.createElement("a");
+            download.href = "data:" + t + ";base64," + res;
+            download.download = n;
+            download.click();
     })
     .catch(error => error.message)
     setWaiting(false);
@@ -261,7 +249,6 @@ useEffect(() => {
 
                 const miainfoblock = await guerABI.methods.getNFTInfo(miaArray[0]).call({from:account[0]});
                 if (miainfoblock) {
-                console.log(String(miainfoblock));
                     setMymia(miainfoblock[0]);    
                     setConnecting(false);
                     setActive1(true);
@@ -273,12 +260,10 @@ useEffect(() => {
                     setActive2(true);
                 }
 
-                console.log('c');
-
-                const ecount = await guerABI.methods.doGetEncryptedCount(miaArray[0]).call({from:account[0]})
+                const ecount = await guerABI.methods.getEncryptedCount(miaArray[0]).call({from:account[0]})
 
                 for (let i = 1;i <= ecount;i++){
-                await guerABI.methods.doGetEncrypted(miaArray[0], i).call({from:account[0]})
+                await guerABI.methods.getEncrypted(miaArray[0], i).call({from:account[0]})
                     .then(function(result){
                         temparray.push(result);
                     }).catch(function(error){
@@ -394,8 +379,9 @@ return(
                         ref={inputFile}
                     onChange={() => {encrypt();setWaiting(true);setActive2(!isActive2)}}
                     />
-                <div>Upload a file!                         <img alt="test" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAmCAYAAACGeMg8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMXSURBVFhH7VZBaxpBFPYv+AckYCAk1BoKaUNockg8SKmyUFCapKSRWFACKcUGLxoFC00C2uYmlIDxopCL4KkXL7l58uSPyB/w9nVmdmd9O67atNVuxMOHO+97b/d9772Z0eXz+TCIZ/BrXxEoNvD6qoFXX77jxfZznds4wsv8LULlnwhd1bD94Qj+p2o8Q3gXvdMQzontfD+OXmKHPa/j7vQjumHiz1BPSNsOurk47rYIvxXCfW4Xdfbcf0+fHyLkX4AnQ5PV1zIBkYyRmOBJonzNRdFkxVrywpe+e32SQhiMD/YEWBK8SyQ5XQzhaazRNcl3w7wQqvA+P1khCnji9/vrttxY8MSVUaWYnhBRQWXufxt6d0YVYeJ7RLZeHw87P3voe4JA2dwqpjpak8RciNMwF+I0zIU4DXMhToPL4/FgFjAX4jTMqhA/AsEmqtkuGtk2LoMHWLLwzoUpZGn1ApcpJiDVRHLVP7CmQU6Ey+M9QDLWxm26hcxmGF6LwzLWNm9QTndRjV0g4KXcaGhnFdSLSVtuEnClTrqoHWawtmDvILAQxvvDNhqffiBgxzMki3VUzjRzPUkh/Fv83fKX21zfcnw/6BUPLi4PBHkX46Jj3KeRayKu8BJTE6LlUbnOQxNrDfnrCvKaEMKS877BXqSFWraDciSNDT5C1Pa2wMaqAOGrvpghf80qU5coIclsUoiomsGVjkkcT0iJ4fbBOD1RGTesYLoQw9ivfge3okslhFZkl4YL4bD9AElerM1KJlGiCR6XTO5BcRxGhyxCJILRNqrRuMX2R0LoaIkOWLtlciLBIRyJo35qrK2QQIQJiRxYbH8tRE3WHCvrCI2Ks4qy8v9NCPWlGCnE8mzlXXvv2H5QLj1ViLwca7ECnhg2FQ8RoldWmXUD44UM2SPqpcePYFPIyMtSgUiOj0i/6sMTYuAbnI6W4TsujheMnn7Sv/9fi116UeO4rX7uoHbSQjWjH8cjL8tpw+jAwD2iOnpX0sgkWEcSN4iaR6+zwLvCuyB/uW1AyGPFXIjTMDtC3G43Hj/c+AWb+PTJKLjyWAAAAABJRU5ErkJggg=="/>
-</div>
+                <div>Upload a file!
+                    <img alt="test" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAeCAIAAAC5TEmyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABgSURBVEhLY3gro0IVNGoQYTTSDfp99jyaCCYiyqAfq9aiiWCikR7YxCACBv0HAzRBrGgoGvTr2Ak0QayIsEFfK2vRBLEiwga9N7REE8SKCBhEPBo1iDAaNYgwopJBMioALvtj38z7JYkAAAAASUVORK5CYII="/>
+                </div>
                 
                 <div>
                     <label style={{fontSize:'16px'}}>

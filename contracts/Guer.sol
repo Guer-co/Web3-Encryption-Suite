@@ -50,6 +50,10 @@ contract Guer {
         return Mia(docAddress).getKeystore();
     }
 
+    function getEncryptedCount (address payable docAddress) public view returns (uint256) {
+        return Mia(docAddress).encryptedCount;
+    }
+
     function getEncrypted(address payable docAddress, uint _id) public view returns (string memory, string memory, uint, string memory, string memory, string memory) {
         return Mia(docAddress).getEncryptedDetails(_id);
     }
