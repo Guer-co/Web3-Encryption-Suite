@@ -224,8 +224,6 @@ func decryptData(keystorepass string, keystorehash string, companionhash string,
 		fmt.Println(err)
 	}
 
-	ioutil.WriteFile(plaintextWriteName, plaintext, 0664)
-
 	return plaintext
 }
 
