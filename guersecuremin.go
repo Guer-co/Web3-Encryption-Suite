@@ -40,41 +40,6 @@ func join(strs ...string) string {
 	return sb.String()
 }
 
-func createKeystore(keystorepass string) string {
-
-	ks := keystore.NewKeyStore("./tmp", keystore.StandardScryptN, keystore.StandardScryptP)
-	password := keystorepass
-	ks.NewAccount(password)
-
-	dir := "./tmp/"
-	files, _ := ioutil.ReadDir(dir)
-	var newestFile string
-	var newestTime int64 = 0
-	for _, f := range files {
-		fi, err := os.Stat(dir + f.Name())
-		if err != nil {
-			fmt.Println(err)
-		}
-		currTime := fi.ModTime().Unix()
-		if currTime > newestTime {
-			newestTime = currTime
-			newestFile = f.Name()
-		}
-	}
-
-	filelocation := "./tmp/" + string(newestFile)
-	file, err := os.Open(filelocation)
-	dat, err := ioutil.ReadAll(file)
-
-	sh := shell.NewShell("https://ipfs.infura.io:5001")
-	cid, err := sh.Add(bytes.NewReader(dat))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s", err)
-		os.Exit(1)
-	}
-	return cid
-}
-
 func encryptData(keystorepass string, keystorehash string, userfile *os.File) []byte {
 
 	keystorePass := keystorepass

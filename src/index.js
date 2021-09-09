@@ -20,7 +20,7 @@ import 'moment-timezone';
 import Photos from './Photos';
 
 const Filestorage = require('@skalenetwork/filestorage.js');
-
+const IPFS = require('ipfs-http-client');
 String.prototype.trunc = function(n){ return this.substr(0,n-1)+(this.length>n?'...':''); };
 
 function Index() {
@@ -34,13 +34,14 @@ const [usage, setUsage] = useState('Personal');
 const [isActive1, setActive1] = useState(false);
 const [isActive2, setActive2] = useState(false);
 const [keystorefile, setKeystorefile] = useState('');
-const [encryptpass, setEncryptpass] = useState('');
+const [encryptpass, setEncryptpass] = useState('aaa');
 const [connecting, setConnecting] = useState(true);
 const [keystorecheck, setKeystorecheck] = useState(true);
 const [rendercheat,setRendercheat] = useState(false);
 const [opensharemodal, setOpensharemodal] = useState(false);
 const [modalname, setModalname] = useState(false);
 const [waiting, setWaiting] = useState(false);
+const [fileUrl, updateFileUrl] = useState(``)
 
 const inputFile = useRef(null);
 let temparray = [];
@@ -91,9 +92,7 @@ const onButtonClick = () => {
                 .then(() => {
                 })
                 .catch((error) => console.log(error.message));
-            })
-  
-            ;
+            });
           } catch (error) {
             alert("You need to allow access to your metamask to use the app.");
         }
@@ -130,10 +129,11 @@ const web3Check = async () => {
                 })
                 .then(() => {     
                 guer.methods.createNFT().send({
-                    from: myaccount
+                    from: myaccount,
+                    value: web3.utils.toWei(".00001", "ether")
                 })
                 .then(function(result){
-                    //console.log(result);
+                    console.log(result);
                     window.location.reload(false);
                 }).catch(function(error){
                     console.log(error);
@@ -156,27 +156,22 @@ if (web3 === ''){
 
 const keystore = async (e) => {
     setWaiting(true);
-    const data = new FormData();
-    data.append("encryptpass", encryptpass);
-
-    fetch('/api/keystore', {
-        method: 'POST',
-        body: data
+    const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+    console.log(ipfs);
+    const ks = web3.eth.accounts.create();
+    const encryptedks = web3.eth.accounts.encrypt(ks.privateKey, encryptpass);
+    var buf = Buffer.from(JSON.stringify(encryptedks));
+    const upload = await ipfs.add(buf);
+    console.log(upload);
+    guer.methods.doAddKeystore(mymia, upload.path).send({
+        from: myaccount
     })
-    .then(res => res.json())
-    .then(res => {
-        setKeystorefile(res);
-        guer.methods.doAddKeystore(mymia, res).send({
-                from: myaccount
-            })
-            .then(function(result){
-                setActive2(true);
-            })
-            .catch(function(error){
-                console.log(error);
-            });
+    .then(function(result){
+        setActive2(true);
     })
-    .catch(error => error.message)
+    .catch(function(error){
+        console.log(error);
+    });
     setWaiting(false);
 }
 
@@ -185,7 +180,6 @@ const encrypt = (e) => {
     const data = new FormData();
     const file = document.getElementById("data_file").files[0];
     data.append("filename", file.name);
-
     data.append("file", file);
     data.append("keystorefile", keystorefile);
     data.append("encryptpass", encryptpass);    
@@ -206,7 +200,6 @@ const encrypt = (e) => {
             }).catch(function(error){
                 console.log(error);
             });
-
     })
     .catch(error => error.message)
     setWaiting(false);

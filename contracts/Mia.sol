@@ -43,6 +43,10 @@ contract Mia {
         return (id, creationDate, encryptedCount, keystore);
     }
 
+    function getEncryptedCount() public view returns (uint) {
+        return (encryptedCount);
+    }
+
     function addKeystore(string memory _hash) public {
         keystore = _hash;
     }

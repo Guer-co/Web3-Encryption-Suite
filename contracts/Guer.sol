@@ -18,11 +18,6 @@ contract Guer {
         bytes32 indexed _key2  //in the frontend code, if your address doesn't match sender, then key 2 is yours.
     );
 
-    function createNFT() public payable {
-        Mia a = new Mia();
-        MiasByUser[msg.sender].push(address(a));
-    }
-
     function doPayRoyalty() public payable returns(bool){
         if (msg.value >= .0001 ether)
         {
@@ -32,6 +27,13 @@ contract Guer {
         else {
             return false;
         }
+    }
+
+    function createNFT() public payable returns (bool){
+        ourWallet.transfer(msg.value);
+        Mia a = new Mia();
+        MiasByUser[msg.sender].push(address(a));        
+        return true;
     }
 
     function getUserNFTs() public view returns (address[] memory){
@@ -50,8 +52,8 @@ contract Guer {
         return Mia(docAddress).getKeystore();
     }
 
-    function getEncryptedCount (address payable docAddress) public view returns (uint256) {
-        return Mia(docAddress).encryptedCount;
+    function getEncryptedCount (address payable docAddress) public view returns (uint) {
+        return Mia(docAddress).getEncryptedCount();
     }
 
     function getEncrypted(address payable docAddress, uint _id) public view returns (string memory, string memory, uint, string memory, string memory, string memory) {

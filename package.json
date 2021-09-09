@@ -30,7 +30,7 @@
     "ethers": "^4.0.47",
     "file-saver": "^2.0.5",
     "fs": "0.0.1-security",
-    "ipfs-http-client": "^48.1.1",
+    "ipfs-http-client": "^48.2.2",
     "material-ui-icons": "^1.0.0-beta.36",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
