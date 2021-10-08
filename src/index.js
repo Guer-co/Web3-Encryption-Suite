@@ -19,7 +19,7 @@ import Moment from 'react-moment';
 import 'moment-timezone';
 import Photos from './Photos';
 
-const Filestorage = require('@skalenetwork/filestorage.js');
+//const Filestorage = require('@skalenetwork/filestorage.js');
 const IPFS = require('ipfs-http-client');
 String.prototype.trunc = function(n){ return this.substr(0,n-1)+(this.length>n?'...':''); };
 
@@ -41,11 +41,13 @@ const [rendercheat,setRendercheat] = useState(false);
 const [opensharemodal, setOpensharemodal] = useState(false);
 const [modalname, setModalname] = useState(false);
 const [waiting, setWaiting] = useState(false);
-const [fileUrl, updateFileUrl] = useState(``)
+const [fileUrl, updateFileUrl] = useState('')
+const [wasm, setWasm] = useState('')
 
 const inputFile = useRef(null);
 let temparray = [];
 
+const go = new global.Go(); // Defined in wasm_exec.js
 
 const handleChange = (event) => {
     console.log(event.target.value);
@@ -273,6 +275,42 @@ useEffect(() => {
         }
         } 
     loadEthereumData();
+
+      const fetchWasm = async (wasmModuleUrl, importObject) => {
+        let response = undefined;
+      
+        if (!importObject) {
+          importObject = {
+            env: {
+              abort: () => console.log("Abort!")
+            }
+          };
+        }
+        if (WebAssembly.instantiateStreaming) {
+          response = await WebAssembly.instantiateStreaming(
+            fetch('./a.wasm'),
+            global.importObject
+          );
+          console.log(response.instance.exports);
+        } 
+        //else {
+        //  const fetchAndInstantiateTask = async () => {
+        //    const wasmArrayBuffer = await fetch('https://siasky.net/AAD3WR6ECXkqiIaDZUUCB3dQNNyI-FrPLTambW9IOscLZg').then(response =>
+        //      response.arrayBuffer()
+        //    );
+        //    return WebAssembly.instantiate(wasmArrayBuffer, importObject);
+        //  };
+        //    response = await fetchAndInstantiateTask();
+        //  }
+        //  return response;
+        //};
+      }
+
+      
+      if (wasm === '') {
+      fetchWasm();
+      setWasm(wasm);
+      }
 },[web3,myaccount,mymia,rendercheat,waiting,temparray]);
 
 return(
