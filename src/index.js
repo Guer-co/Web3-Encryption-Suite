@@ -276,41 +276,11 @@ useEffect(() => {
         } 
     loadEthereumData();
 
-      const fetchWasm = async (wasmModuleUrl, importObject) => {
-        let response = undefined;
-      
-        if (!importObject) {
-          importObject = {
-            env: {
-              abort: () => console.log("Abort!")
-            }
-          };
-        }
-        if (WebAssembly.instantiateStreaming) {
-          response = await WebAssembly.instantiateStreaming(
-            fetch('./a.wasm'),
-            global.importObject
-          );
-          console.log(response.instance.exports);
-        } 
-        //else {
-        //  const fetchAndInstantiateTask = async () => {
-        //    const wasmArrayBuffer = await fetch('https://siasky.net/AAD3WR6ECXkqiIaDZUUCB3dQNNyI-FrPLTambW9IOscLZg').then(response =>
-        //      response.arrayBuffer()
-        //    );
-        //    return WebAssembly.instantiate(wasmArrayBuffer, importObject);
-        //  };
-        //    response = await fetchAndInstantiateTask();
-        //  }
-        //  return response;
-        //};
-      }
+    var importObject = { imports: { imported_func: arg => console.log(arg) } };
 
-      
-      if (wasm === '') {
-      fetchWasm();
-      setWasm(wasm);
-      }
+    WebAssembly.instantiateStreaming(fetch('./wasm-with-go.wasm'), importObject)
+    .then(obj => obj.instance.exports.exported_func());
+    
 },[web3,myaccount,mymia,rendercheat,waiting,temparray]);
 
 return(

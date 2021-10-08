@@ -32,6 +32,10 @@ type Companion struct {
 	AES       []byte `json:"aesiv"`
 }
 
+func main() {
+	fmt.Println("We are in the guersecurewasm file")
+}
+
 func join(strs ...string) string {
 	var sb strings.Builder
 	for _, str := range strs {
@@ -151,7 +155,7 @@ func decryptData(keystorepass string, keystorehash string, companionhash string,
 	companionHash := companionhash
 	fileHash := filehash
 
-	plaintextWriteName := "./tmp/unencryptedfile.png"
+	//plaintextWriteName := "./tmp/unencryptedfile.png"
 	keystoreurl := join("https://cloudflare-ipfs.com/ipfs/", keystoreHash)
 	ciphertexturl := join("https://cloudflare-ipfs.com/ipfs/", fileHash)
 	companionurl := join("https://cloudflare-ipfs.com/ipfs/", companionHash)
@@ -225,8 +229,4 @@ func decryptData(keystorepass string, keystorehash string, companionhash string,
 	}
 
 	return plaintext
-}
-
-func main() {
-
 }
