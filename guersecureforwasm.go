@@ -32,10 +32,6 @@ type Companion struct {
 	AES       []byte `json:"aesiv"`
 }
 
-func main() {
-	fmt.Println("We are in the guersecurewasm file")
-}
-
 func join(strs ...string) string {
 	var sb strings.Builder
 	for _, str := range strs {
@@ -44,6 +40,7 @@ func join(strs ...string) string {
 	return sb.String()
 }
 
+//export encryptData
 func encryptData(keystorepass string, keystorehash string, userfile *os.File) []byte {
 
 	keystorePass := keystorepass
@@ -148,6 +145,7 @@ func encryptData(keystorepass string, keystorehash string, userfile *os.File) []
 	return result
 }
 
+//export decryptData
 func decryptData(keystorepass string, keystorehash string, companionhash string, filehash string) []byte {
 
 	keystorePass := keystorepass
@@ -229,4 +227,8 @@ func decryptData(keystorepass string, keystorehash string, companionhash string,
 	}
 
 	return plaintext
+}
+
+func main() {
+	fmt.Println("We are in the guersecurewasm file")
 }

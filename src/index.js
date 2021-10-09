@@ -47,7 +47,6 @@ const [wasm, setWasm] = useState('')
 const inputFile = useRef(null);
 let temparray = [];
 
-const go = new global.Go(); // Defined in wasm_exec.js
 
 const handleChange = (event) => {
     console.log(event.target.value);
@@ -276,10 +275,19 @@ useEffect(() => {
         } 
     loadEthereumData();
 
-    var importObject = { imports: { imported_func: arg => console.log(arg) } };
+    const getWasm = async () => {
+        const go = new global.Go();
+        const WASM_URL = './tinygo.wasm';
+        var wasm;
+            WebAssembly.instantiateStreaming(fetch(WASM_URL), go.importObject).then(function (obj) {
+                wasm = obj.instance;
+                go.run(wasm);
+                console.log('added two numbers:', wasm.exports.multiply(5, Math.random() * 10));
+            })
+    }
 
-    WebAssembly.instantiateStreaming(fetch('./wasm-with-go.wasm'), importObject)
-    .then(obj => obj.instance.exports.exported_func());
+    getWasm();
+
     
 },[web3,myaccount,mymia,rendercheat,waiting,temparray]);
 
