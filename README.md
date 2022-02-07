@@ -149,7 +149,7 @@ Securely distribute content and manage access using networked Trusted Execution 
 
 git clone git@github.com:Guer-co/Web3-Encryption-Suite.git  
 cd Web3-Encryption-Suite  
-npm i && npm start  
+npm i --force && npm start  
 
 ### Documentation
 
